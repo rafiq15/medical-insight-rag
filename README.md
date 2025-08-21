@@ -76,13 +76,19 @@ cd medical-insight-rag
 
 2. Add your medical PDFs to the `src/main/resources/reports-pdf/` directory following the naming convention: `report_PATIENTID.pdf`
 
-3. Deploy with Docker Compose:
+3. Build the application:
 
 ```bash
-docker-compose up -d
+mvn clean package -DskipTests
 ```
 
-4. Access the API at `http://localhost:8080/api/medical-analysis`
+4. Deploy with Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+5. Access the API at `http://localhost:8080/api/medical-analysis`
 
 ### Basic Usage
 
@@ -120,11 +126,15 @@ curl -X POST \
 ### Building from Source
 
 ```bash
+# Using Maven directly:
+mvn clean package -DskipTests
+
+# Or using Maven wrapper:
 # For Linux/MacOS:
-./mvnw clean package
+./mvnw clean package -DskipTests
 
 # For Windows:
-mvnw.cmd clean package
+mvnw.cmd clean package -DskipTests
 ```
 
 ### Running Tests
