@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: medical-reports-rag-system
+    document:
+      ingestion:
+        filename: classpath:reports-pdf/*.pdf
+
+  datasource:
+    username: postgres
+    password: root
+    url: jdbc:postgresql://pgvector:5432/rag_vector_store
+    driver-class-name: org.postgresql.Driver
+
+  ai:
+    ollama:
+      base-url: http://ollama:11434
+      init:
+        pull-model-strategy: WHEN_MISSING
+        timeout: 2m
+      chat:
+        options:
+          model: llama3.2:latest
+      embedding:
+        model: nomic-embed-text
+
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        remove-existing-vector-store-table: true
+        dimensions: 768

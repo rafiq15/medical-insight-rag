@@ -1,0 +1,51 @@
+version: '3.8'
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  pgvector:
+    image: 'pgvector/pgvector:pg16'  # Recommend pinning version
+    environment:
+      POSTGRES_DB: rag_vector_store
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+    labels:
+      - "org.springframework.boot.service-connection=postgres"
+    ports:
+      - '5432'  # Optional for local dev, remove for production
+    networks:
+      - app-network
+
+  medical-rag-ai-assistance:
+    build: .
+    depends_on:
+      - pgvector
+      - ollama
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pgvector:5432/rag_vector_store
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_AI_OLLAMA_BASE-URL: http://ollama:11434
+    ports:
+      - '8080:8080'
+    networks:
+      - app-network
+
+  ollama:
+    image: ollama/ollama:latest  # Example version, replace as appropriate
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - app-network
+
+volumes:
+  ollama:
